@@ -42,6 +42,7 @@ BUILTIN_APPS = [
 ]
 
 USER_APPS = [
+    'rest_framework',
     'accounts',
 
 ]
@@ -141,3 +142,11 @@ STATIC_ROOT = 'static'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIA_URL = '/media/'
+
+AUTH_USER_MODEL = "accounts.User"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}

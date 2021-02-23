@@ -8,6 +8,10 @@ django = "*"
 djangorestframework = "*"
 python-decouple = "*"
 psycopg2 = "*"
+model-bakery = "*"
+pip = "*"
+install = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 
