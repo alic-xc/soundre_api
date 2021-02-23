@@ -140,3 +140,26 @@ class AccountViewTestCase(APITestCase):
         for details in invalid_login_details:
             response = self.client.post('/api/login', details, 'json')
             self.assertNotIn('response', response.data)
+
+    def test_account_authenticated(self):
+        """ """
+        login_detail = {
+            'username': self.users[0]['username'],
+            'password': self.users[0]['password']
+        }
+        # Create a new user
+        self.client.post('/account/', self.users[0], 'json')
+
+        # Use another instance of APIClient to work with credentials
+        response = self.client.post('/api/login', login_detail, 'json')
+        client = APIClient()
+        client.credentials(HTTP_AUTHORIZATION='%s %s' %('Bearer', response.data['access']))
+        account_response = client.get('/account/')
+
+        # Testing against all possibility
+        self.assertEqual(account_response.status_code, status.HTTP_200_OK)
+        self.assertContains(account_response, 'id')
+        self.assertContains(account_response, 'first_name')
+        self.assertContains(account_response, 'last_name')
+        self.assertContains(account_response, 'email')
+        self.assertNotContains(account_response, 'password')
