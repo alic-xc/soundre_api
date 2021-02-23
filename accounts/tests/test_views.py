@@ -29,6 +29,39 @@ class AccountViewTestCase(APITestCase):
         """ """
         response = self.client.get('/account/')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        
+    def test_account_login(self):
+        login_details = [
+            {
+                'username': self.users[0]['username'],
+                'password': self.users[0]['password'],
+            },
+            {
+                'username': self.users[1]['username'],
+                'password': self.users[1]['password'],
+            }
+        ]
+
+        #creating new users
+        for data in self.users:
+            response = self.client.post('/account/', data, 'json')
+
+        for details in login_details:
+            response = self.client.post('/api/login', details, 'json')
+            self.assertIn('refresh', response.data)
+            self.assertIn('access', response.data)
+
+    def test_account_invalid_login(self):
+        """ """
+
+        invalid_login_details = [
+            {'username': 'test01', 'password': 'BxdsD2133'},
+            {'username': 'test02', 'password': 'BxdsD2133'},
+        ]
+
+        for details in invalid_login_details:
+            response = self.client.post('/api/login', details, 'json')
+            self.assertNotIn('response', response.data)
 
     def test_account_create_users(self):
         """ """
@@ -108,35 +141,4 @@ class AccountViewTestCase(APITestCase):
         response = self.client.post('/account/', data_2, 'json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_account_login(self):
-        login_details = [
-            {
-                'username': self.users[0]['username'],
-                'password': self.users[0]['password'],
-            },
-            {
-                'username': self.users[1]['username'],
-                'password': self.users[1]['password'],
-            }
-        ]
 
-        #creating new users
-        for data in self.users:
-            response = self.client.post('/account/', data, 'json')
-
-        for details in login_details:
-            response = self.client.post('/api/login', details, 'json')
-            self.assertIn('refresh', response.data)
-            self.assertIn('access', response.data)
-
-    def test_account_invalid_login(self):
-        """ """
-
-        invalid_login_details = [
-            {'username': 'test01', 'password': 'BxdsD2133'},
-            {'username': 'test02', 'password': 'BxdsD2133'},
-        ]
-
-        for details in invalid_login_details:
-            response = self.client.post('/api/login', details, 'json')
-            self.assertNotIn('response', response.data)
